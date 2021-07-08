@@ -5,7 +5,13 @@ package com.intel.algorithm;
  *
  * Not support multi-thread.
  */
-public class CosineSimilarity {
+public class CosineSimilarityKNN {
+
+  // load shared library, libknn.so
+  static
+  {
+    System.loadLibrary("knn");
+  }
 
   private static Table<Integer> indicesTable;
   private static Table<Float> distancesTable;
@@ -20,8 +26,13 @@ public class CosineSimilarity {
    * @param trainDataPath  path to train data's csv file.
    * @param queryDataPath  path to test data's csv file.
    **/
-  public native static int callNativeCosineSimilarity(int neighborCount,
+  public native static int calculate(int neighborCount,
       String trainDataPath, String queryDataPath);
+
+  /**
+   * TODO: make the below modification methods private in order to disallow
+   * modification from external class except native code.
+   */
 
   /**
    * Call by native code for init indicesTable.
@@ -56,14 +67,14 @@ public class CosineSimilarity {
   /**
    * API exposed to user.
    */
-  public Table<Integer> getIndicesTable() {
+  public static Table<Integer> getIndicesTable() {
     return indicesTable;
   }
 
   /**
    * API exposed to user.
    */
-  public Table<Float> getDistancesTable() {
+  public static Table<Float> getDistancesTable() {
     return distancesTable;
   }
 

@@ -1,13 +1,13 @@
-#include "com_intel_algorithm_CosineSimilarity.h"
+#include "com_intel_algorithm_CosineSimilarityKNN.h"
 #include "oneapi/dal/algo/knn.hpp"
 #include "oneapi/dal/io/csv.hpp"
 #include <jni.h>
 #include <string>
 
-#define JAVA_WRAPPER_CLASS "com/intel/algorithm/CosineSimilarity"
+#define JAVA_WRAPPER_CLASS "com/intel/algorithm/CosineSimilarityKNN"
 
 
-int com_intel_algorithm_CosineSimilarity_callCosineSimilarity(
+JNIEXPORT int com_intel_algorithm_CosineSimilarityKNN_calculate(
   JNIEnv *env, jclass thisClass, jint neighbors_count, jstring train_data_path, jstring query_data_path) {
 
     const auto train_data_file_path = (*env)->GetStringUTFChars(env, train_data_path, NULL);
