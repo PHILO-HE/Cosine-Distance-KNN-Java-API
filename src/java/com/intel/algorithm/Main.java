@@ -1,13 +1,16 @@
 package com.intel.algorithm;
 
+/**
+ * For test use.
+ */
 public class Main {
 
     public static void main(String[] args) {
-        CosineSimilarityKNN.calculate(6, args[0], args[1]);
+        CosineDistanceKNN.search(6, args[0], args[1]);
         System.out.println("Indices Table: ");
-        output(CosineSimilarityKNN.getIndicesTable());
+        output(CosineDistanceKNN.getIndicesTable());
         System.out.println("Distances Table: ");
-        output(CosineSimilarityKNN.getDistancesTable());
+        output(CosineDistanceKNN.getDistancesTable());
     }
 
     public static <T> void output(Table<T> table) {

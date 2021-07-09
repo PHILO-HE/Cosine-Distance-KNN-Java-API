@@ -1,7 +1,7 @@
 package com.intel.algorithm;
 
 /**
- * Maintains indices/distances obtained from the reference of cosine similarity
+ * Maintains indices/distances obtained from the reference of cosine distance
  * KNN algorithm for given data.
  */
 public class Table<T> {

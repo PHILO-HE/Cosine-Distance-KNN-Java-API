@@ -1,7 +1,7 @@
 package com.intel.algorithm;
 
 /**
- * Java API for cosine similarity KNN algorithm.
+ * Java API for cosine distance KNN algorithm.
  *
  * Not support multi-thread.
  */
@@ -26,7 +26,7 @@ public class CosineDistanceKNN {
    * @param trainDataPath  path to train data's csv file.
    * @param queryDataPath  path to test data's csv file.
    **/
-  public native static int calculate(int neighborCount,
+  public native static int search(int neighborCount,
       String trainDataPath, String queryDataPath);
 
   /**

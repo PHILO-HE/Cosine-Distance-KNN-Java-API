@@ -9,8 +9,9 @@
 int createTableOnJVM(const oneapi::dal::table &table, std::string initTableMethod,
     std::string setTableMethod);
 
-JNIEXPORT int com_intel_algorithm_CosineSimilarityKNN_calculate(
-  JNIEnv *env, jclass thisClass, jint neighbors_count, jstring train_data_path, jstring query_data_path) {
+// knn brute force search based on consine distance
+JNIEXPORT int com_intel_algorithm_CosineDistanceKNN_search(JNIEnv *env,
+    jclass thisClass, jint neighbors_count, jstring train_data_path, jstring query_data_path) {
 
     const auto train_data_file_path = (*env)->GetStringUTFChars(env, train_data_path, NULL);
     const auto query_data_file_path = (*env)->GetStringUTFChars(env, query_data_path, NULL);
