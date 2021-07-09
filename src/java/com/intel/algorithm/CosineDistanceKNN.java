@@ -5,9 +5,9 @@ package com.intel.algorithm;
  *
  * Not support multi-thread.
  */
-public class CosineSimilarityKNN {
+public class CosineDistanceKNN {
 
-  // load shared library, libknn.so
+  // load shared library, libknn.so, consistent with the name of generated shared lib.
   static
   {
     System.loadLibrary("knn");

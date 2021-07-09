@@ -1,11 +1,13 @@
-#include "com_intel_algorithm_CosineSimilarityKNN.h"
+#include "com_intel_algorithm_CosineDistanceKNN.h"
 #include "oneapi/dal/algo/knn.hpp"
 #include "oneapi/dal/io/csv.hpp"
 #include <jni.h>
 #include <string>
 
-#define JAVA_WRAPPER_CLASS "com/intel/algorithm/CosineSimilarityKNN"
+#define JAVA_WRAPPER_CLASS "com/intel/algorithm/CosineDistanceKNN"
 
+int createTableOnJVM(const oneapi::dal::table &table, std::string initTableMethod,
+    std::string setTableMethod);
 
 JNIEXPORT int com_intel_algorithm_CosineSimilarityKNN_calculate(
   JNIEnv *env, jclass thisClass, jint neighbors_count, jstring train_data_path, jstring query_data_path) {
