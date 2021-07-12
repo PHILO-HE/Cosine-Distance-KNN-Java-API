@@ -12,14 +12,14 @@ namespace dal = oneapi::dal;
 namespace knn = dal::knn;
 
 int createTableOnJVM(const oneapi::dal::table &table, std::string initTableMethod,
-    std::string setTableMethod);
+    std::string setTableMethod, JNIEnv *env);
 
 // knn brute force search based on consine distance
 JNIEXPORT jint JNICALL com_intel_algorithm_CosineDistanceKNN_search(JNIEnv *env,
     jclass thisClass, jint neighbors_count, jstring train_data_path, jstring query_data_path) {
 
-    const auto train_data_file_path = (*env)->GetStringUTFChars(env, train_data_path, NULL);
-    const auto query_data_file_path = (*env)->GetStringUTFChars(env, query_data_path, NULL);
+    const auto train_data_file_path = env->GetStringUTFChars(train_data_path, NULL);
+    const auto query_data_file_path = env->GetStringUTFChars(query_data_path, NULL);
 
     const auto x_train = dal::read<dal::table>(dal::csv::data_source{ train_data_file_path });
     const auto x_query = dal::read<dal::table>(dal::csv::data_source{ query_data_file_path });
@@ -42,32 +42,32 @@ JNIEXPORT jint JNICALL com_intel_algorithm_CosineDistanceKNN_search(JNIEnv *env,
     const auto indices_table =  test_result.get_indices();
     const auto distances_table = test_result.get_distances();
 
-    int res = createTableOnJVM(indices_table, "initIndicesTable", "setIndices", *env);
+    int res = createTableOnJVM(indices_table, "initIndicesTable", "setIndices", env);
     if (res == -1) {
       return -1;
     }
-    res = createTableOnJVM(distances_table, "initDistancesTable", "setDistances", *env);
+    res = createTableOnJVM(distances_table, "initDistancesTable", "setDistances", env);
     return res;
 }
 
 // TODO: free resources.
-int createTableOnJVM(const oneapi::dal::table &table, std::string initTableMethod,
-    std::string setTableMethod, JNIEnv *env) {
+int createTableOnJVM(const oneapi::dal::table &table, const std::string& initTableMethod,
+    const std::string& setTableMethod, JNIEnv *env) {
     // TODO: check whether above passed jclass can be used.
-    jclass clazz = (*env)->FindClass(env, JAVA_WRAPPER_CLASS);
+    jclass clazz = env->FindClass(JAVA_WRAPPER_CLASS);
     if (clazz == NULL) {
       return -1;
     }
     // Call initIndicesTable
-    jmethodID mid = (*env)->GetStaticMethodID(env, clazz, initTableMethod, "(I)V", "(I)V");
-    (*env)->CallStaticVoidMethod(env, clazz, mid, table.get_row_count(),
+    jmethodID mid = env->GetStaticMethodID(clazz, initTableMethod, "(II)V");
+    env->CallStaticVoidMethod(clazz, mid, table.get_row_count(),
       table.get_column_count());
 
     // Different arg type is considered.
     if (setTableMethod == "setIndices") {
-      jmethodID mid = (*env)->GetStaticMethodID(env, clazz, setTableMethod, "(II)V");
+      jmethodID mid = env->GetStaticMethodID(clazz, setTableMethod, "(II)V");
     } else {
-      jmethodID mid = (*env)->GetStaticMethodID(env, clazz, setTableMethod, "(IF)V");
+      jmethodID mid = env->GetStaticMethodID(clazz, setTableMethod, "(IF)V");
     }
 
     // TODO: for indices table, data type may be converted implicitly to int.
@@ -76,7 +76,7 @@ int createTableOnJVM(const oneapi::dal::table &table, std::string initTableMetho
     for (std::int64_t i = 0; i < table.get_row_count(); i++) {
         for (std::int64_t j = 0; j < table.get_column_count(); j++) {
              // TODO: check type issue
-            (*env)->CallStaticVoidMethod(env, clazz, mid, i * table.get_column_count() + j,
+            env->CallStaticVoidMethod(clazz, mid, i * table.get_column_count() + j,
             x[i * table.get_column_count() + j])
         }
     }
