@@ -15,7 +15,7 @@ int createTableOnJVM(const oneapi::dal::table &table, std::string initTableMetho
     std::string setTableMethod, JNIEnv *env);
 
 // knn brute force search based on consine distance
-JNIEXPORT jint JNICALL com_intel_algorithm_CosineDistanceKNN_search(JNIEnv *env,
+JNIEXPORT jint JNICALL Java_com_intel_algorithm_CosineDistanceKNN_search(JNIEnv *env,
     jclass thisClass, jint neighbors_count, jstring train_data_path, jstring query_data_path) {
 
     const auto train_data_file_path = env->GetStringUTFChars(train_data_path, NULL);
@@ -59,15 +59,15 @@ int createTableOnJVM(const oneapi::dal::table &table, const std::string& initTab
       return -1;
     }
     // Call initIndicesTable
-    jmethodID mid = env->GetStaticMethodID(clazz, initTableMethod, "(II)V");
+    jmethodID mid = env->GetStaticMethodID(clazz, initTableMethod.c_str(), "(II)V");
     env->CallStaticVoidMethod(clazz, mid, table.get_row_count(),
       table.get_column_count());
 
     // Different arg type is considered.
     if (setTableMethod == "setIndices") {
-      jmethodID mid = env->GetStaticMethodID(clazz, setTableMethod, "(II)V");
+      jmethodID mid = env->GetStaticMethodID(clazz, setTableMethod.c_str(), "(II)V");
     } else {
-      jmethodID mid = env->GetStaticMethodID(clazz, setTableMethod, "(IF)V");
+      jmethodID mid = env->GetStaticMethodID(clazz, setTableMethod.c_str(), "(IF)V");
     }
 
     // TODO: for indices table, data type may be converted implicitly to int.
@@ -77,7 +77,7 @@ int createTableOnJVM(const oneapi::dal::table &table, const std::string& initTab
         for (std::int64_t j = 0; j < table.get_column_count(); j++) {
              // TODO: check type issue
             env->CallStaticVoidMethod(clazz, mid, i * table.get_column_count() + j,
-            x[i * table.get_column_count() + j])
+            x[i * table.get_column_count() + j]);
         }
     }
     return 0;
