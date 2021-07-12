@@ -6,7 +6,11 @@ package com.intel.algorithm;
 public class Main {
 
     public static void main(String[] args) {
-        CosineDistanceKNN.search(6, args[0], args[1]);
+        int res = CosineDistanceKNN.search(6, args[0], args[1]);
+        if (res == -1) {
+            System.out.println("Failed in calling native function.");
+            return;
+        }
         System.out.println("Indices Table: ");
         output(CosineDistanceKNN.getIndicesTable());
         System.out.println("Distances Table: ");

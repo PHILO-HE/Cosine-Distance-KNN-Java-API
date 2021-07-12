@@ -1,16 +1,21 @@
 #include "com_intel_algorithm_CosineDistanceKNN.h"
 #include "oneapi/dal/algo/knn.hpp"
 #include "oneapi/dal/io/csv.hpp"
+#include "oneapi/dal/table/row_accessor.hpp"
+#include "oneapi/dal/table/common.hpp"
 #include <jni.h>
 #include <string>
 
 #define JAVA_WRAPPER_CLASS "com/intel/algorithm/CosineDistanceKNN"
 
+namespace dal = oneapi::dal;
+namespace knn = dal::knn;
+
 int createTableOnJVM(const oneapi::dal::table &table, std::string initTableMethod,
     std::string setTableMethod);
 
 // knn brute force search based on consine distance
-JNIEXPORT int com_intel_algorithm_CosineDistanceKNN_search(JNIEnv *env,
+JNIEXPORT jint JNICALL com_intel_algorithm_CosineDistanceKNN_search(JNIEnv *env,
     jclass thisClass, jint neighbors_count, jstring train_data_path, jstring query_data_path) {
 
     const auto train_data_file_path = (*env)->GetStringUTFChars(env, train_data_path, NULL);
@@ -37,17 +42,17 @@ JNIEXPORT int com_intel_algorithm_CosineDistanceKNN_search(JNIEnv *env,
     const auto indices_table =  test_result.get_indices();
     const auto distances_table = test_result.get_distances();
 
-    int res = createTableOnJVM(indices_table, "initIndicesTable", "setIndices");
+    int res = createTableOnJVM(indices_table, "initIndicesTable", "setIndices", *env);
     if (res == -1) {
       return -1;
     }
-    res = createTableOnJVM(distances_table, "initDistancesTable", "setDistances");
+    res = createTableOnJVM(distances_table, "initDistancesTable", "setDistances", *env);
     return res;
 }
 
 // TODO: free resources.
 int createTableOnJVM(const oneapi::dal::table &table, std::string initTableMethod,
-    std::string setTableMethod) {
+    std::string setTableMethod, JNIEnv *env) {
     // TODO: check whether above passed jclass can be used.
     jclass clazz = (*env)->FindClass(env, JAVA_WRAPPER_CLASS);
     if (clazz == NULL) {
