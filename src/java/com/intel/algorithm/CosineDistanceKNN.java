@@ -8,8 +8,7 @@ package com.intel.algorithm;
 public class CosineDistanceKNN {
 
   // load generated shared library: libknn.so.
-  static
-  {
+  static {
     System.loadLibrary("knn");
   }
 
@@ -23,11 +22,11 @@ public class CosineDistanceKNN {
    * k_nearest_neighbors_train_data.csv
    * k_nearest_neighbors_test_data.csv
    *
-   * @param trainDataPath  path to train data's csv file.
-   * @param queryDataPath  path to test data's csv file.
+   * @param trainDataPath path to train data's csv file.
+   * @param queryDataPath path to test data's csv file.
    **/
   public native static int search(int neighborCount,
-      String trainDataPath, String queryDataPath);
+    String trainDataPath, String queryDataPath);
 
   /**
    * TODO: make the below modification methods private in order to disallow

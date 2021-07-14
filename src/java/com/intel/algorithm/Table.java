@@ -14,7 +14,7 @@ public class Table<T> {
   public Table(int rowCount, int columnCount) {
     this.rowCount = rowCount;
     this.columnCount = columnCount;
-    this.data = (T[])new Object[rowCount * columnCount];
+    this.data = (T[]) new Object[rowCount * columnCount];
   }
 
   public void setData(int ind, T d) {

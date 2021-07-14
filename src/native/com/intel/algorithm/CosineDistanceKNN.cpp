@@ -17,7 +17,6 @@ namespace knn = dal::knn;
 // TODO: free resources.
 static int createTableOnJVM(const oneapi::dal::table &table, const std::string& initTableMethod,
     const std::string& setTableMethod, JNIEnv *env) {
-    // TODO: check whether above passed jclass can be used.
     jclass clazz = env->FindClass(JAVA_WRAPPER_CLASS);
     if (clazz == NULL) {
       return -1;
