@@ -70,7 +70,6 @@ JNIEXPORT jint JNICALL Java_com_intel_algorithm_CosineDistanceKNN_search(JNIEnv 
     using cosine_desc_t = dal::cosine_distance::descriptor<float>;
     const auto cosine_desc = cosine_desc_t{};
 
-//    const std::size_t neighbors_count = 6;
     const auto knn_desc =
         knn::descriptor<float, knn::method::brute_force, knn::task::search, cosine_desc_t>(
             neighbors_count,
@@ -79,6 +78,7 @@ JNIEXPORT jint JNICALL Java_com_intel_algorithm_CosineDistanceKNN_search(JNIEnv 
     const auto train_result = dal::train(knn_desc, x_train);
     const auto test_result = dal::infer(knn_desc, x_query, train_result.get_model());
 
+    // #include "example_util/utils.hpp"
     std::cout << "Indices result:\n" << test_result.get_indices() << std::endl;
     std::cout << "Distance result:\n" << test_result.get_distances() << std::endl;
 
