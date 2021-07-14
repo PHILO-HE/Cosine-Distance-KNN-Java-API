@@ -7,7 +7,7 @@ package com.intel.algorithm;
  */
 public class CosineDistanceKNN {
 
-  // load shared library, libknn.so, consistent with the name of generated shared lib.
+  // load generated shared library: libknn.so.
   static
   {
     System.loadLibrary("knn");
