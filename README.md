@@ -81,6 +81,9 @@ Github link: https://github.com/oneapi-src/oneDAL
 
   A shared lib named `libknn.so` will be created in current directory. The lib name is hard coded in Java code. So do NOT change it.
 
+  You can use `ldd -r libknn.so` to check whether there is any "undefined symbol" issue, which is generally caused by incorrectly setting for
+  `-L` (or `LD_LIBRARY_PATH`) or `-l` in compiling. 
+
 ### Test
 
 * Train/test sample data
@@ -94,7 +97,7 @@ Github link: https://github.com/oneapi-src/oneDAL
   Navigate to `<PROJECT_HOME>/src/java`.
 
   `javac com/intel/algorithm/Main.java`
-  
+
   `java -Djava.library.path=. com.intel.algorithm.Main <PATH_TO_TRAIN_DATA> <PATH_TO_TEST_DATA> > output.log`
 
   The path for shared lib, `libknn.so`, is specified via `-Djava.library.path`.

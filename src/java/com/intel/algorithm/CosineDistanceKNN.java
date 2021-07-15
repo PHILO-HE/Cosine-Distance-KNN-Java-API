@@ -30,15 +30,10 @@ public class CosineDistanceKNN {
     String trainDataPath, String queryDataPath);
 
   /**
-   * TODO: make the below modification methods private in order to disallow
-   * modification from external class except native code.
-   */
-
-  /**
    * Call by native code for init indicesTable.
    * Applicable for small amount of data.
    */
-  public static void initIndicesTable(int rowCount, int columnCount) {
+  private static void initIndicesTable(int rowCount, int columnCount) {
     indicesTable = new Table<>(rowCount, columnCount);
   }
 
@@ -46,21 +41,21 @@ public class CosineDistanceKNN {
    * Call by native code for init distancesTable.
    * Applicable for small amount of data.
    */
-  public static void initDistancesTable(int rowCount, int columnCount) {
+  private static void initDistancesTable(int rowCount, int columnCount) {
     distancesTable = new Table<>(rowCount, columnCount);
   }
 
   /**
    * Call by native code.
    */
-  public static void setIndices(int ind, int indice) {
+  private static void setIndices(int ind, int indice) {
     indicesTable.setData(ind, indice);
   }
 
   /**
    * Call by native code.
    */
-  public static void setDistances(int ind, float distance) {
+  private static void setDistances(int ind, float distance) {
     distancesTable.setData(ind, distance);
   }
 
