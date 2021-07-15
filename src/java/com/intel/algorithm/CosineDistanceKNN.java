@@ -22,6 +22,7 @@ public class CosineDistanceKNN {
    * k_nearest_neighbors_train_data.csv
    * k_nearest_neighbors_test_data.csv
    *
+   * @param neighborCount neighbor count for KNN algorithm.
    * @param trainDataPath path to train data's csv file.
    * @param queryDataPath path to test data's csv file.
    **/

@@ -1,12 +1,22 @@
 ## Java Wrapper for Cosine Distance Based KNN Algorithm
 
+### Introduction
+
+This project provides a Java wrapper for cosine distance based KNN algorithm of oneDAL.
+
+In current implementation, the program (C++ part) will read train/test data from two CSV files. And the paths for them are
+required to be passed through Java API. User can also provide neighbors count through Java API. As the result of inference,
+two tables will be created in JVM: indices table & distances table.
+
 ### Requirements
 
 * JDK
 * gcc/g++ (6.x or above, 7.3.1 is workable)
 * Intel OneDAL
 
-### Build OneDAL
+### Build OneDAL (Optional)
+
+You can directly install oneDAL libs if a released version meets your requirement.
 
 In currently latest release, cosine distance based KNN algorithm is not included. So we need build oneDAL from source code.
 
@@ -20,7 +30,7 @@ Github link: https://github.com/oneapi-src/oneDAL
 
   `export CPATH=$JAVA_HOME/include:$JAVA_HOME/include/linux:$CPATH`
 
-* Download libs:
+* Download dependencies:
 
   Go to OneDAL source code home directory.
 
@@ -40,13 +50,13 @@ Github link: https://github.com/oneapi-src/oneDAL
 
 ### Build the current project
 
-* Build Java Wrapper and generate header
+* Build Java wrapper and generate header
 
   Navigate to `<PROJECT_HOME>/src/java`.
 
   `javac -h . com/intel/algorithm/CosineDistanceKNN.java`
 
-  `com_intel_algorithm_CosineDistanceKNN.h` is generated in current path.
+  Then, `com_intel_algorithm_CosineDistanceKNN.h` will be generated in current path.
 
 * Build C++ code
 
@@ -59,7 +69,7 @@ Github link: https://github.com/oneapi-src/oneDAL
 
   `-L<ONEDAL_HOME>/__release_lnx_gnu/daal/latest/lib/intel64` can be removed if the path is already included in `LD_LIBRARY_PATH`.
 
-  `-I$JAVA_HOME/include` & `-I$JAVA_HOME/include/linux` should be added to help the compiler find `jni.h`.
+  `-I$JAVA_HOME/include` & `-I$JAVA_HOME/include/linux` should be added to help the compiler find `jni.h`, provided by JDK.
 
   `-I<PROJECT_HOME>/src/java` provides the path where `com_intel_algorithm_CosineDistanceKNN.h` is located.
 
@@ -67,7 +77,7 @@ Github link: https://github.com/oneapi-src/oneDAL
   can be used by program via `#include "sub-dir/xxx.h"`.
 
   `-I<ONEDAL_HOME>/__release_lnx_gnu/daal/latest/examples/oneapi/cpp/source` is required since `#include "example_util/utils.hpp"` is introduced
-  into the C++ program to facilitate printing result.
+  into our C++ program to facilitate printing result.
 
   A shared lib named `libknn.so` will be created in current directory. The lib name is hard coded in Java code. So do NOT change it.
 
@@ -84,10 +94,33 @@ Github link: https://github.com/oneapi-src/oneDAL
   Navigate to `<PROJECT_HOME>/src/java`.
 
   `javac com/intel/algorithm/Main.java`
-
+  
   `java -Djava.library.path=. com.intel.algorithm.Main <PATH_TO_TRAIN_DATA> <PATH_TO_TEST_DATA> > output.log`
 
-  The path for shared lib, `libknn.so`, is specified via -Djava.library.path.
+  The path for shared lib, `libknn.so`, is specified via `-Djava.library.path`.
+
+### Integration to Your Project
+
+* Install OneDAL (for future release contains cosine distance based KNN) or build from source code.
+
+* Introduce the below source code into your project
+
+  `./src/java/com/intel/algorithm/CosineDistanceKNN.java` (Java API)
+
+  `./src/java/com/intel/algorithm/Table.java`
+
+  `./src/native/com/intel/algorithm/CosineDistanceKNN.cpp`
+
+  You need to build a shared lib named `libknn.so`, as the above instructions show.
+
+### Future Work
+
+The current implementation is quite straightforward. In the future, we can consider the seamless integration into frameworks
+or pipelines. If test data comes from other source of Java program, we will need to pass the data to C++ code through JNI.
+
+Another consideration is data scale. If there is very large amount of data as result, creating tables on JVM will consume a lot
+of memory resource and bring non-ignorable latency. In this case, it may be better to keep the data on native memory and
+provide Java API for accessing certain row(s) of data.
 
 ## Reference:
 
