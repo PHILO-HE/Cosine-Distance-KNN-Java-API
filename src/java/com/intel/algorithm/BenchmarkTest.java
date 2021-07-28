@@ -6,10 +6,6 @@ package com.intel.algorithm;
 public class BenchmarkTest {
 
   public static void main(String[] args) {
-    //      const std::size_t rows_train_count = (argc < 1) ? 1000000 : std::stoi(argv[1]);
-//    const std::size_t columns_count = (argc < 2) ? 512 : std::stoi(argv[2]);
-//    const std::size_t rows_query_count = (argc < 3) ? 100 : std::stoi(argv[3]);
-//    const std::size_t neighbors_count = (argc < 4) ? 10 : std::stoi(argv[4]);
     int rows_train_count = args.length < 1 ? 1000000 : Integer.valueOf(args[0]);
     int columns_count = args.length < 2 ? 512 : Integer.valueOf(args[1]);
     int rows_query_count = args.length < 3 ? 100 : Integer.valueOf(args[2]);
