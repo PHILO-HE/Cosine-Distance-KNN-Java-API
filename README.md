@@ -40,7 +40,7 @@ Github link: https://github.com/oneapi-src/oneDAL
 
   `source ./__deps/tbb/lnx/env/vars.sh intel64`
 
-* Build oneDAL:
+* Build oneDAL with GNU compiler:
 
   `make -f makefile daal oneapi_c PLAT=lnx32e COMPILER=gnu`
 
@@ -48,7 +48,10 @@ Github link: https://github.com/oneapi-src/oneDAL
 
   The above `source` command will set LD_LIBRARY_PATH/LIBRARY_PATH to include `<ONEDAL_HOME>/__release_lnx_gnu/daal/latest/lib/intel64`
 
-### Build the current project
+  With GNU used to compile oneDAL, the algorithm can performs 2~3 times worse, compared with Intel ICC which introduces optimizations
+  with avx instruction sets.
+
+### Build This Project
 
 * Build Java wrapper and generate header
 
@@ -61,13 +64,16 @@ Github link: https://github.com/oneapi-src/oneDAL
 * Build C++ code
 
   `g++ ../native/com/intel/algorithm/CosineDistanceKNN.cpp -L<ONEDAL_HOME>/__release_lnx_gnu/daal/latest/lib/intel64 \
-  -lonedal_core -lonedal -lonedal_sequential -lonedal_thread -lJavaAPI -std=c++17 -fPIC -shared -o libknn.so -I$JAVA_HOME/include \
+  -lonedal_core -lonedal -lonedal_thread -lJavaAPI -std=c++17 -fPIC -shared -o libknn.so -I$JAVA_HOME/include \
   -I$JAVA_HOME/include/linux -I<PROJECT_HOME>/src/java -I<ONEDAL_HOME>/__release_lnx_gnu/daal/latest/include \
   -I<ONEDAL_HOME>/__release_lnx_gnu/daal/latest/examples/oneapi/cpp/source`
 
   Note:
 
-  `-L<ONEDAL_HOME>/__release_lnx_gnu/daal/latest/lib/intel64` can be removed if the path is already included in `LD_LIBRARY_PATH`.
+  `-L<ONEDAL_HOME>/__release_lnx_gnu/daal/latest/lib/intel64` can be removed if the path is already included in `LIBRARY_PATH` & `LD_LIBRARY_PATH`.
+
+  Either `-lonedal_sequential` or `-lonedal_thread` should be provided. `-lonedal_sequential` means the computation is executed in sequential, which
+  will lead to worse performance, compared with `-lonedal_thread`.
 
   `-I$JAVA_HOME/include` & `-I$JAVA_HOME/include/linux` should be added to help the compiler find `jni.h`, provided by JDK.
 
@@ -100,7 +106,47 @@ Github link: https://github.com/oneapi-src/oneDAL
 
   `java -Djava.library.path=. com.intel.algorithm.Main <PATH_TO_TRAIN_DATA> <PATH_TO_TEST_DATA> > output.log`
 
-  The path for shared lib, `libknn.so`, is specified via `-Djava.library.path`.
+  The path for shared lib, `libknn.so`, is specified via `-Djava.library.path`. You can set `CLASSPATH`, e.g.,
+  `export CLASSPATH=<PROJECT_HOME>/src/java:$CLASSPATH` to execute the class without depending execution position.
+
+### Benchmark
+
+To benchmark the algorithm's performance, you can run either pure C++ code or mixed Java/C++ code. Dataset will be randomly generated inside the test.
+
+* Pure C++
+
+  Go to '<Cosine-Distance-KNN-Java-API_HOME>/src/native/com/intel/algorithm'.
+
+  There is a pure C++ implementation named `knn_search_cosine_similarity_pure_c_plus_plus.cpp` (contributed by Kirill Petrov).
+
+  `export LIBRARY_PATH=<ONEDAL_RELEASE_HOME>/daal/latest/lib/intel64:/root/PHILO/shared_daal_release/__release_lnx/tbb/latest/lib/intel64/`
+
+  `export LD_LIBRARY_PATH=<ONEDAL_RELEASE_HOME>/daal/latest/lib/intel64:/root/PHILO/shared_daal_release/__release_lnx/tbb/latest/lib/intel64/`
+
+  Generally, the above <ONEDAL_RELEASE_HOME> is the path for directory named __release_lnx (compiled by ICC) or __release_lnx_gnu (compiled by GNU compiler).
+
+  `g++ knn_search_cosine_similarity_pure_c_plus_plus.cpp -lonedal_core -lonedal -lonedal_thread -lJavaAPI -std=c++17 -fPIC -o
+  knn_pure_c_plus_plus.out -I<ONEDAL_RELEASE_HOME>/daal/latest/include -I<ONEDAL_RELEASE_HOME>/daal/latest/examples/oneapi/cpp/source`
+
+  `./knn_pure_c_plus_plus.out 1000000 512 100 10`
+
+  Here, 1000000 means rows count for train dataset, 512 means columns count, 100 means rows count for test dataset, and 10 means neighbors count.
+
+* Java/C++ mixed code
+
+  Go to `<PROJECT_HOME>/src/java`.
+
+  `javac -h . com/intel/algorithm/CosineDistanceKNN.java`
+
+  `g++ <PROJECT_HOME>/src/native/com/intel/algorithm/CosineDistanceKNN.cpp -L<ONEDAL_RELEASE_HOME>/daal/latest/lib/intel64 -lonedal_core
+  -lonedal -lonedal_thread -lJavaAPI -std=c++17 -fPIC -shared -o libknn.so -I$JAVA_HOME/include -I$JAVA_HOME/include/linux -I<PROJECT_HOME>/src/java
+  -I<ONEDAL_RELEASE_HOME>/daal/latest/include -I<ONEDAL_RELEASE_HOME>/daal/latest/examples/oneapi/cpp/source`
+
+  `javac com/intel/algorithm/BenchmarkTest.java`
+
+  `java -Djava.library.path=. com.intel.algorithm.BenchmarkTest 1000000 512 100 10`
+
+  The meaning of given args is as same as that of pure C++ code.
 
 ### Integration to Your Project
 
