@@ -29,16 +29,6 @@ public class CosineDistanceKNN {
   public native static int search(int neighborCount,
     String trainDataPath, String queryDataPath);
 
-//      const std::size_t rows_train_count = (argc < 1) ? 1000000 : std::stoi(argv[1]);
-//    const std::size_t columns_count = (argc < 2) ? 512 : std::stoi(argv[2]);
-//    const std::size_t rows_query_count = (argc < 3) ? 100 : std::stoi(argv[3]);
-//    const std::size_t neighbors_count = (argc < 4) ? 10 : std::stoi(argv[4]);
-//
-//  std::cout << "rows_train_count: " << rows_train_count << " "
-//    << "columns_count: " << columns_count << " "
-//    << "rows_query_count: " << rows_query_count << " "
-//    << "neighbors_count: " << neighbors_count << "\n";
-
   /**
    * benchmark test. train data and query data is generated randomly inside the
    * c++ program.
